@@ -2,12 +2,12 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 
-st.title("🥗 Fridge Inventory & Expiry Tracker")
+st.title("🥗 Fridge Inventory & Expiry Tracker with Units & Notifications")
 
 # Preloaded fridge items
 data = {
     "Item Name": ["Milk", "Eggs", "Spinach"],
-    "Quantity": ["1 liter", "12 pcs", "200 g"],
+    "Quantity": ["1 litre", "12 pcs", "200 g"],
     "Expiry Date": ["2026-02-05", "2026-02-10", "2026-02-02"]
 }
 
@@ -15,16 +15,20 @@ data = {
 df = pd.DataFrame(data)
 df['Expiry Date'] = pd.to_datetime(df['Expiry Date']).dt.date
 
-# User input form
+# User input form to add new items
 st.subheader("➕ Add New Item")
 with st.form("add_item_form"):
     item_name = st.text_input("Item Name")
-    quantity = st.text_input("Quantity (e.g., 1 liter, 5 pcs)")
+    
+    # Quantity input
+    qty_number = st.number_input("Quantity", min_value=0.0, step=0.1)
+    qty_unit = st.selectbox("Unit", ["pcs", "kg", "litre", "g", "ml"])
+    quantity = f"{qty_number} {qty_unit}"
+    
     expiry_date = st.date_input("Expiry Date")
     submitted = st.form_submit_button("Add Item")
 
     if submitted:
-        # Append new item to DataFrame
         new_row = {"Item Name": item_name, "Quantity": quantity, "Expiry Date": expiry_date}
         df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
         st.success(f"✅ {item_name} added successfully!")
@@ -34,6 +38,14 @@ today = datetime.today().date()
 df['Status'] = df['Expiry Date'].apply(
     lambda x: "Expired" if x < today else ("Expiring Soon" if x <= today + timedelta(days=3) else "Fresh")
 )
+
+# Show notifications for expiring/expired items
+st.subheader("🔔 Expiry Notifications")
+for index, row in df.iterrows():
+    if row['Status'] == "Expired":
+        st.error(f"❌ ALERT: {row['Item Name']} ({row['Quantity']}) has expired!")
+    elif row['Status'] == "Expiring Soon":
+        st.warning(f"⚠️ Warning: {row['Item Name']} ({row['Quantity']}) is about to expire soon!")
 
 # Display full fridge inventory
 st.subheader("📋 Current Fridge Inventory")
@@ -47,8 +59,8 @@ def highlight_status(row):
 
 st.dataframe(df.style.apply(highlight_status, axis=1))
 
-# Recipe suggestions
-st.subheader("🍳 Recipe Suggestions for Expiring Items")
+# Recipe suggestions for items expiring soon
+st.subheader("🍳 Recipe Suggestions")
 recipes = {
     "Milk": ["Pancakes", "Smoothie"],
     "Spinach": ["Spinach Soup", "Omelette"],
