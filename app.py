@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
 import os
-import smtplib  # easier email sending than smtplib
+import smtplib
+import yagmail # easier email sending than smtplib
 
 # -----------------------------
 # CONFIGURATION
