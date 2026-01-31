@@ -3,7 +3,34 @@ import pandas as pd
 from datetime import datetime, timedelta
 import os
 import smtplib
-import yagmail # easier email sending than smtplib
+import smtplib
+from email.mime.text import MIMEText
+
+def send_email_notification(item_name, expiry_status, user_email):
+    """Send email notification for expired/expiring items using smtplib"""
+    try:
+        sender_email = user_email
+        password = st.session_state.get("email_password")  # App password
+
+        subject = f"Fridge Alert: {item_name} {expiry_status}"
+        body = f"Your item '{item_name}' is {expiry_status}!"
+
+        msg = MIMEText(body)
+        msg["Subject"] = subject
+        msg["From"] = sender_email
+        msg["To"] = user_email
+
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(sender_email, password)
+        server.send_message(msg)
+        server.quit()
+
+        st.info(f"📧 Notification sent for {item_name}")
+
+    except Exception as e:
+        st.warning(f"Email not sent: {e}")
+# easier email sending than smtplib
 
 # -----------------------------
 # CONFIGURATION
