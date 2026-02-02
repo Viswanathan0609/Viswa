@@ -95,7 +95,7 @@ if not st.session_state.logged_in:
 # -----------------------------
 # MAIN APP PAGE
 # -----------------------------
-st.title("🥗 FreshMate: Fridge Inventory & Expiry Tracker")
+st.title("🥗 FreshMate: Groceries Inventory & Expiry Tracker")
 st.write(f"Welcome, {st.session_state.user_email}!")
 
 # Load inventory
@@ -152,7 +152,7 @@ save_inventory(df)
 # -----------------------------
 # DISPLAY INVENTORY
 # -----------------------------
-st.subheader("📋 Current Fridge Inventory")
+st.subheader("📋 Current Grocery Inventory")
 def highlight_status(row):
     if row.Status == "Expired":
         return ["background-color: #ff9999"]*5
