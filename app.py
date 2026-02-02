@@ -89,8 +89,7 @@ if not st.session_state.logged_in:
             st.session_state.user_phone = login_phone
             st.session_state.email_password = email_password
             st.success(f"Logged in as {login_email}")
-        else:
-            st.warning("Please enter your email and app password to login")
+        
     st.stop()  # stop running until login is complete
 
 # -----------------------------
