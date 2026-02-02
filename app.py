@@ -27,9 +27,7 @@ def send_email_notification(item_name, expiry_status, user_email):
         server.quit()
 
         st.info(f"📧 Notification sent for {item_name}")
-
-    except Exception as e:
-        st.warning(f"Email not sent: {e}")
+        
 # easier email sending than smtplib
 
 # -----------------------------
